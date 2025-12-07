@@ -22,7 +22,7 @@ End-to-End Data Analytics Project using Python, SQL &amp; Power BI
 		3) Number of transactions
 		4) Previous purchases
 		5) Frequency per month
-		6)Avg review rating
+		6) Avg review rating
 	2) Selected k = 4 segments, providing:
 		1) High-value cluster
 		2) Loyalty-driven cluster
@@ -31,7 +31,7 @@ End-to-End Data Analytics Project using Python, SQL &amp; Power BI
 
 3. Market Basket Analysis (Apriori)
   Generated association rules from product combinations to identify cross-sell opportunities such as:
-	1) Customers buying Blouse often buy Jewelry
+	1) Customers buying Saree often buy Jewelry
 	2) Pants → Belt
 	3) Seasonal apparel → Accessories
   Exported to product_association_rules.csv.
