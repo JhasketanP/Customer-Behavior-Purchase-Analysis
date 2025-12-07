@@ -93,12 +93,11 @@ CREATE INDEX IF NOT EXISTS idx_telco_customers2_category      ON telco_customers
 CREATE INDEX IF NOT EXISTS idx_telco_customers2_segment       ON telco_customers3 (segment);
 CREATE INDEX IF NOT EXISTS idx_telco_customers2_item          ON telco_customers3 (item_purchased);
 CREATE INDEX IF NOT EXISTS idx_telco_customers2_payment       ON telco_customers3 (payment_method);
-CREATE INDEX IF NOT EXISTS idx_telco_customers2_transaction  ON telco_customers3 (customer_id);  -- if customer_id used for joins
+CREATE INDEX IF NOT EXISTS idx_telco_customers2_transaction  ON telco_customers3 (customer_id);  
 
 
--- 2) Dimension / Lookup tables (created as snapshots, safe & fast for slicers)
---    These create small tables Power BI can import and use as slicers.
--- ============================
+-- 2) Dimension / Lookup tables 
+
 DROP TABLE IF EXISTS dim_category;
 CREATE TABLE dim_category AS
 SELECT DISTINCT COALESCE(category, 'Unknown') AS category_name
@@ -117,7 +116,7 @@ SELECT DISTINCT COALESCE(location, 'Unknown') AS location_name
 FROM telco_customers3
 ORDER BY 1;
 
--- If you have a 'segment' numeric or categorical field:
+
 DROP TABLE IF EXISTS dim_segment;
 CREATE TABLE dim_segment AS
 SELECT DISTINCT segment AS segment_id
@@ -138,9 +137,7 @@ GROUP BY category
 ORDER BY cnt DESC
 LIMIT 25;
 
--- 4) Power-BI friendly views (recommended: import these views OR use DirectQuery)
---    They are read-only and aggregate data in ways commonly needed for visuals
--- ============================
+
 DROP VIEW IF EXISTS vw_kpis_telco;
 CREATE VIEW vw_kpis_telco AS
 SELECT
@@ -194,7 +191,7 @@ FROM telco_customers3
 GROUP BY 1
 ORDER BY cnt DESC;
 
--- Example view for Top N within a chosen category (Power BI can push filter)
+-- Example view for Top N within a chosen category 
 DROP VIEW IF EXISTS vw_top_items_by_category;
 CREATE VIEW vw_top_items_by_category AS
 SELECT
@@ -206,9 +203,7 @@ FROM telco_customers3
 GROUP BY 1,2
 ORDER BY revenue DESC;
 
--- 5) Materialized view for heavy aggregations (refresh manually or via job)
---    Good for DirectQuery if aggregation is expensive
--- ============================
+-- 5) Materialized view for heavy aggregations 
 DROP MATERIALIZED VIEW IF EXISTS mv_revenue_by_location;
 CREATE MATERIALIZED VIEW mv_revenue_by_location AS
 SELECT
@@ -220,8 +215,6 @@ GROUP BY 1;
 
 ANALYZE telco_customers3;
 
--- 9) Useful ad-hoc queries Power BI users commonly use (copy into Power BI native query if needed)
--- ============================
 -- Total revenue by location
 SELECT location, SUM(purchase_amount)::numeric(18,2) AS total_revenue, COUNT(*) AS tx_count
 FROM telco_customers3
@@ -244,3 +237,4 @@ ORDER BY segment;
 SELECT customer_id, COUNT(*) FROM telco_customers3 GROUP BY customer_id HAVING COUNT(*)>1 ORDER BY 2 DESC LIMIT 20;
 
 SELECT MIN(purchase_amount) AS min_amt, MAX(purchase_amount) AS max_amt, AVG(purchase_amount)::numeric(18,2) AS avg_amt FROM telco_customers3;
+
